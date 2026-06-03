@@ -1,0 +1,335 @@
+/* =================================================================
+   RESET E CONFIGURAÇÕES GLOBAIS DO AMBIENTE
+   ================================================================= */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    background: #000;
+    font-family: 'Courier New', Courier, monospace;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    overflow: hidden;
+    color: white;
+    transition: background-color 0.8s ease; /* Transição de fundo entre cenários */
+}
+
+/* Transição de Fade suave para troca de fases (controlado pelo themes.js) */
+.theme-transition {
+    opacity: 0.3;
+    filter: blur(2px);
+}
+
+/* =================================================================
+   HUD (PAINEL SUPERIOR DE INFORMAÇÕES)
+   ================================================================= */
+#hud {
+    width: 100%;
+    max-width: 600px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 20px;
+    margin-bottom: 15px;
+    background: rgba(0, 0, 0, 0.85);
+    border: 3px solid #ffe600;
+    border-radius: 10px;
+    font-size: 18px;
+    font-weight: bold;
+    letter-spacing: 1px;
+    transition: border-color 0.5s ease;
+}
+
+#hud button {
+    background: transparent;
+    border: none;
+    font-size: 20px;
+    cursor: pointer;
+    margin-left: 8px;
+    transition: transform 0.2s ease;
+}
+
+#hud button:hover {
+    transform: scale(1.2);
+}
+
+/* =================================================================
+   BARRA DE PROGRESSO DO POWER MODE
+   ================================================================= */
+#powerContainer {
+    width: 100%;
+    max-width: 600px;
+    height: 6px;
+    background: rgba(255, 255, 255, 0.1);
+    margin-bottom: 15px;
+    border-radius: 3px;
+    overflow: hidden;
+}
+
+#powerBar {
+    width: 0%;
+    height: 100%;
+    background: #00ffff;
+    transition: width 0.1s linear;
+}
+
+/* =================================================================
+   TABULEIRO CENTRAL DO JOGO (GRID DINÂMICO)
+   ================================================================= */
+#game {
+    display: grid;
+    width: 90vw;
+    max-width: 600px;
+    height: 90vw;
+    max-height: 600px;
+    background-color: #000;
+    border: 4px solid #ffe600;
+    border-radius: 12px;
+    padding: 2px;
+    gap: 1px;
+    transition: border-color 0.5s ease, box-shadow 0.5s ease;
+}
+
+/* Células individuais do Labirinto */
+.cell {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Blocos de Paredes */
+.wall {
+    border-radius: 2px;
+    transition: background-image 0.5s ease;
+}
+
+/* =================================================================
+   ELEMENTOS COLETÁVEIS (ITENS INJETADOS NO CENTRO)
+   ================================================================= */
+.food-item, .power-item {
+    pointer-events: none;
+    object-fit: contain;
+    z-index: 1;
+}
+
+.food-item {
+    width: 35%;
+    height: 35%;
+    animation: pulse 1.5s infinite alternate;
+}
+
+.power-item {
+    width: 65%;
+    height: 65%;
+}
+
+/* Animação de estouro rápido quando a comida é devorada */
+.eat-effect {
+    animation: eatPop 0.2s ease-out;
+}
+
+/* =================================================================
+   RENDERIZAÇÃO SEGURA DO PAC-MAN (PLAYER)
+   ================================================================= */
+.cell.pacman {
+    background-image: url('assets/gifs/pacman.gif') !important;
+    background-size: 85% 85% !important;
+    background-position: center !important;
+    background-repeat: no-repeat !important;
+    z-index: 5 !important;
+    transition: transform 0.1s linear;
+}
+
+/* Classes de rotação aplicadas diretamente na célula do Pac-Man */
+.cell.pacman.face-up    { transform: rotate(-90deg); }
+.cell.pacman.face-down  { transform: rotate(90deg); }
+.cell.pacman.face-left  { transform: rotate(180deg); }
+.cell.pacman.face-right { transform: rotate(0deg); }
+
+/* Feedback visual de invulnerabilidade (pós-morte) */
+.cell.pacman.invulnerable {
+    animation: blink 0.2s infinite !important;
+}
+
+/* =================================================================
+   RENDERIZAÇÃO DOS FANTASMAS (CLASSES DE BACKGROUND DEDICADAS)
+   ================================================================= */
+.cell.ghost-red-sprite { 
+    background-image: url('assets/gifs/ghost-red.gif') !important; 
+    z-index: 4 !important; 
+    background-size: 90% 90% !important; 
+    background-position: center !important; 
+    background-repeat: no-repeat !important; 
+}
+.cell.ghost-pink-sprite { 
+    background-image: url('assets/gifs/ghost-pink.gif') !important; 
+    z-index: 4 !important; 
+    background-size: 90% 90% !important; 
+    background-position: center !important; 
+    background-repeat: no-repeat !important; 
+}
+.cell.ghost-cyan-sprite { 
+    background-image: url('assets/gifs/ghost-cyan.gif') !important; 
+    z-index: 4 !important; 
+    background-size: 90% 90% !important; 
+    background-position: center !important; 
+    background-repeat: no-repeat !important; 
+}
+.cell.ghost-orange-sprite { 
+    background-image: url('assets/gifs/ghost-orange.gif') !important; 
+    z-index: 4 !important; 
+    background-size: 90% 90% !important; 
+    background-position: center !important; 
+    background-repeat: no-repeat !important; 
+}
+
+/* Estado de vulnerabilidade (Substitui o GIF de qualquer fantasma por cima) */
+.cell.scared {
+    background-image: url('assets/gifs/group_ghost.gif') !important;
+    background-size: 90% 90% !important;
+    background-position: center !important;
+    background-repeat: no-repeat !important;
+    filter: drop-shadow(0 0 5px #0051ff) !important;
+    z-index: 4 !important;
+}
+
+/* =================================================================
+   OVERLAYS E NOTIFICAÇÕES (TELAS EM SEGUNDO PLANO)
+   ================================================================= */
+#overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.85);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    z-index: 10;
+    text-align: center;
+}
+
+#overlayText h1 {
+    font-size: 42px;
+    color: #ffe600;
+    text-shadow: 0 0 15px #ffe600;
+    margin-bottom: 5px;
+    letter-spacing: 3px;
+}
+
+#startBtn {
+    padding: 12px 35px;
+    font-size: 20px;
+    font-weight: bold;
+    color: black;
+    background: #ffe600;
+    border: none;
+    border-radius: 25px;
+    cursor: pointer;
+    box-shadow: 0 0 15px #ffe600;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+#startBtn:hover {
+    transform: scale(1.08);
+    box-shadow: 0 0 25px #ffe600;
+}
+
+/* Pop-ups de Notificação Flutuante */
+#notification {
+    position: fixed;
+    top: 25%;
+    left: 50%;
+    transform: translate(-50%, -50%) scale(0.8);
+    background: rgba(0, 0, 0, 0.9);
+    border: 2px solid #00ffff;
+    padding: 15px 30px;
+    border-radius: 8px;
+    font-size: 24px;
+    color: #00ffff;
+    font-weight: bold;
+    box-shadow: 0 0 20px #00ffff;
+    z-index: 9;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s ease, transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+#notification.show {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1);
+}
+
+/* Tela de Carregamento Oculta */
+#loading {
+    display: none;
+}
+
+/* =================================================================
+   ANIMAÇÕES E KEYFRAMES (EFEITOS ESPECIAIS)
+   ================================================================= */
+@keyframes blink {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.2; }
+}
+
+@keyframes flash {
+    from { opacity: 0.4; transform: scale(0.85); }
+    to { opacity: 1; transform: scale(1); }
+}
+
+@keyframes pulse {
+    from { transform: scale(0.9); }
+    to { transform: scale(1.1); }
+}
+
+@keyframes eatPop {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.4); }
+    100% { transform: scale(1); }
+}
+
+.score-animate {
+    animation: scorePop 0.3s ease;
+}
+
+@keyframes scorePop {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.2); color: #ffe600; }
+    100% { transform: scale(1); }
+}
+
+/* Efeito de abalo sísmico ao sofrer dano */
+.shake {
+    animation: screenShakeEffect 0.4s ease-in-out;
+}
+
+@keyframes screenShakeEffect {
+    0%, 100% { transform: translateX(0); }
+    20%, 60% { transform: translateX(-6px); }
+    40%, 80% { transform: translateX(6px); }
+}
+
+/* Partículas Flutuantes do Cenário */
+.theme-particle {
+    animation: particleBlink infinite alternate;
+}
+
+@keyframes particleBlink {
+    0% { opacity: 0.1; transform: translateY(0px); }
+    100% { opacity: 0.6; transform: translateY(-10px); }
+}
