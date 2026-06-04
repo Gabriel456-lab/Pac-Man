@@ -1,4 +1,4 @@
-# Pac-Man • • • ⍩⃝
+u# Pac-Man • • • ⍩⃝
 ## 🎮 Sobre o Projeto 
 A proposta é recriar uma versão simples de um game famoso "Pac-Man", utilizando:
   > Estruturação com HTML |
