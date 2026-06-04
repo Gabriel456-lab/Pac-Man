@@ -28,7 +28,7 @@ A proposta é recriar uma versão simples de um game famoso "Pac-Man", utilizand
 ## 🎯 Objetivo
 Projeto desenvolvido para fins educacionais, com foco no aprendizado de desenvolvimento web e lógica de jogos.
 
-##🧾 Instruções de instalação e execução:
+🧾 Instruções de instalação e execução:
 
 1.Baixe o projeto em .rar e depois extraía
 2.Vá no local de instalação e abra com o Vscode.
